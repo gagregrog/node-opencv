@@ -73,6 +73,18 @@ By default it has the shape { devicePort, qKey }.
 
 `deviceShape` can be used to override the default webcam. `qKey` can be used to override the default exit key.
 
-#### saveFaces(numFaces=10, folderPath) => [faces]
+#### saveFaces(options) => [faces]
 
-Starts the webcam and captures the given number of faces, writing them to the `folderPath` provided. If a `folderPath` is provided and the folder doesn't exist, it is created. An array of found faces is returned.
+Starts the webcam and captures a given number of faces, returning them in an array. 
+
+##### options
+
+- Write the faces to disk by providing a `folderPath`. If the folder doesn't exist, it is created.
+- Capture 10 faces by default or provide your own number as `numFaces`.
+- Resize the faces by providing `resize: { x: int, y: int }` in options.
+
+options = { 
+  resize,
+  folderPath,
+  numFaces=10, 
+}

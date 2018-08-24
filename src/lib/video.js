@@ -43,7 +43,13 @@ const startVideo = (handlers, options) => {
   return handlers.handleExit()
 }
 
-const saveFaces = (numFaces=10, folderPath) => {
+const saveFaces = (options) => {
+  const { 
+    resize, 
+    folderPath,
+    numFaces=10, 
+  } = options
+
   if (folderPath) fs.ensureDirSync(folderPath)
   const faces = []
 
@@ -64,10 +70,14 @@ const saveFaces = (numFaces=10, folderPath) => {
       })
     }
 
-    return faces
+    return (
+      resize.x && resize.y 
+        ? faces.map(face => face.resize(resize.x, resize.y)) 
+        : faces
+    )
   }
 
-  startVideo({ 
+  return startVideo({ 
     handleExit,
     handleFrame, 
     handleKeypress,
