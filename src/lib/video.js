@@ -1,10 +1,13 @@
 'use strict';
 
+const fs = require('fs-extra')
 const cv = require('opencv4nodejs')
+const { getFaceImg, exitOnFrame } = require('./util')
 
 const defaultOptions = {
-  devicePort: 0,
   qKey: 113,
+  devicePort: 0,
+  frameCount: 0,
 }
 
 const defaultHandlers = {
@@ -16,7 +19,10 @@ const defaultHandlers = {
     const key = cv.waitKey(1)
   
     return key == options.qKey ? true : false
-  }
+  },
+  handleExit: () => {
+    console.log('[INFO] Closing stream...')
+  },
 }
 
 const startVideo = (handlers, options) => {
@@ -31,9 +37,40 @@ const startVideo = (handlers, options) => {
     frame = handlers.handleFrame(frame, options)
     handlers.handleShow(frame, options)
     exit = handlers.handleKeypress(frame, options)
+    options.frameCount++
   }
+
+  handlers.handleExit()
+}
+
+const saveFaces = (numFaces=10, folderPath='./img') => {
+  fs.ensureDirSync(folderPath)
+  const faces = []
+
+  const handleFrame = (frame, options) => {
+    const face = getFaceImg(frame)
+
+    if (face) faces.push(face)
+
+    return face || frame
+  }
+
+  const handleKeypress = exitOnFrame(numFaces)
+
+  const handleExit = () => {
+    faces.forEach((face, i) => {
+      cv.imwrite(`${folderPath}/${i}.jpg`, face)
+    })
+  }
+
+  startVideo({ 
+    handleExit,
+    handleFrame, 
+    handleKeypress,
+  })
 }
 
 module.exports = {
-  startVideo
+  saveFaces,
+  startVideo,
 }
