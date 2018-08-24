@@ -14,7 +14,7 @@ $ npm install
 
 ## Using the API
 
-### src/lib/util.js
+### src/lib/cv-util.js
 
 #### getFaceImg(image, gray=true)
 
@@ -43,6 +43,20 @@ Same as `getImgsFromDir`, but returns faces found in the images (filtering out i
 #### getFacesFromDirForTraining(dirPath, regex) => [Mat]
 
 Same as `getFacesFromDir`, but grayscales the image and resizes it to 80x80.
+
+#### getTestAndTrain = (imgsArr, percentage=0.75) => ({ train, test })
+
+Takes an array of images, splitting it at the provided percentage [0, 1] and returning the first as `train` and the second as `test`.
+
+### src/lib/util.js
+
+#### shuffleArray(array) => [...]
+
+Takes an array and randomly shuffles its contents, returning a new array.
+
+#### splitAtPercent = (arr, percent=0.75) => [[...], [...]]
+
+Takes an array and splits it at the provided percentage [0, 1]. Returns an array of arrays containing the contents.
 
 ### src/lib/video.js
 

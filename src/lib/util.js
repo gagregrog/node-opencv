@@ -1,67 +1,25 @@
-'use strict';
+const shuffleArray = arr => {
+  const copy = arr.slice()
+  const shuffled = []
 
-const path = require('path')
-const fs = require('fs-extra')
-const cv = require('opencv4nodejs')
-
-const classifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_ALT2)
-
-const getFace = (frame, getImage=false, toGray=false) => {
-  const gray = toGray ? frame.bgrToGray() : frame
-  const { objects: rects } = classifier.detectMultiScale(gray)
-
-  if (!rects.length) return null
-
-  return getImage ? gray.getRegion(rects[0]) : rects[0]
-}
-
-const getFaceRect = image =>
-  getFace(image)
-
-const getFaceImg = (image, gray=true) => 
-  getFace(image, true, gray)
-
-const exitOnFrame = frameNum => (frame, options) => {
-  cv.waitKey(1)
-  
-  return options.frameCount === frameNum
-}
-
-const getImgsFromDir = (dirPath, regex) => {
-  let images = fs.readdirSync(dirPath)
-
-  if (regex) {
-    const reg = RegExp(regex)
-
-    images = images.filter(a => reg.test(a))
+  while(copy.length) {
+    const index = Math.floor(Math.random() * copy.length)
+    shuffled.push(copy[index])
+    copy.splice(index, 1)
   }
 
-  return images.map(img => cv.imread(path.resolve(dirPath, img)))
+  return shuffled
 }
 
-const getFacesFromDir = options =>
-  getImgsFromDir(options.dirPath, options.regex)
-    .map(img => getFaceImg(img, options.gray))
-    .filter(img => img)
-    .map(img => (
-      options.resize && options.resize.x && options.resize.y 
-        ? img.resize(options.resize.x, options.resize.y)
-        : img
-    ))
+const splitAtPercent = (arr, percent=0.75) => {
+  const split = parseInt(arr.length * percent)
+  const first = arr.slice(0, split)
+  const second = arr.slice(split)
 
-const getFacesFromDirForTraining = (dirPath, regex) =>
-  getFacesFromDir({
-    regex,
-    dirPath,
-    gray: true,
-    resize: { x: 80, y: 80 }
-  })
+  return [first, second]
+}
 
 module.exports = {
-  getFaceImg,
-  getFaceRect,
-  exitOnFrame,
-  getImgsFromDir,
-  getFacesFromDir,
-  getFacesFromDirForTraining,
+  shuffleArray,
+  splitAtPercent,
 }

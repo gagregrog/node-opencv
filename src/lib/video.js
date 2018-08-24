@@ -2,7 +2,7 @@
 
 const fs = require('fs-extra')
 const cv = require('opencv4nodejs')
-const { getFaceImg, exitOnFrame } = require('./util')
+const { getFaceImg, exitOnFrame } = require('./cv-util')
 
 const defaultOptions = {
   qKey: 113,
