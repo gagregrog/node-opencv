@@ -40,11 +40,11 @@ const startVideo = (handlers, options) => {
     options.frameCount++
   }
 
-  handlers.handleExit()
+  return handlers.handleExit()
 }
 
-const saveFaces = (numFaces=10, folderPath='./img') => {
-  fs.ensureDirSync(folderPath)
+const saveFaces = (numFaces=10, folderPath) => {
+  if (folderPath) fs.ensureDirSync(folderPath)
   const faces = []
 
   const handleFrame = (frame, options) => {
@@ -58,9 +58,13 @@ const saveFaces = (numFaces=10, folderPath='./img') => {
   const handleKeypress = exitOnFrame(numFaces)
 
   const handleExit = () => {
-    faces.forEach((face, i) => {
-      cv.imwrite(`${folderPath}/${i}.jpg`, face)
-    })
+    if (folderPath) {
+      faces.forEach((face, i) => {
+        cv.imwrite(`${folderPath}/${i}.jpg`, face)
+      })
+    }
+
+    return faces
   }
 
   startVideo({ 
