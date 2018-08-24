@@ -34,7 +34,7 @@ Returns a function that can be passed as `handleKeypress` to `startVideo` to ter
 
 ### src/lib/video.js
 
-#### startVideo(handlers, options)
+#### startVideo(handlers, options) => handleExit()
 
 Start an OpenCV video stream. By default, the stream will be displayed and can be closed by pressing `q` while the stream is focused.
 
@@ -47,6 +47,7 @@ Supports the following methods:
 - `handleFrame(frame, options)`
 - `handleShow(frame, options)`
 - `handleKeypress(frame, options)`
+- `handleExit(frame, options)`
 
 ###### handleFrame(frame, options)
 
@@ -62,7 +63,7 @@ Run custom logic in response to user keypresses. Must return a boolean indicatin
 
 ###### handleExit()
 
-A function to run on program exit.
+A function to run on program exit. Returns result from `startVideo`.
 
 ##### options
 
@@ -72,6 +73,6 @@ By default it has the shape { devicePort, qKey }.
 
 `deviceShape` can be used to override the default webcam. `qKey` can be used to override the default exit key.
 
-#### saveFaces(numFaces=10, folderPath='./img')
+#### saveFaces(numFaces=10, folderPath) => [faces]
 
-Starts the webcam and captures the given number of faces, writing them to the provided folder. If the folder doesn't exist, it is created.
+Starts the webcam and captures the given number of faces, writing them to the `folderPath` provided. If a `folderPath` is provided and the folder doesn't exist, it is created. An array of found faces is returned.
