@@ -32,6 +32,18 @@ If no face is found, `null` is returned.
 
 Returns a function that can be passed as `handleKeypress` to `startVideo` to terminate the video after a given number of frames.
 
+#### getImgsFromDir(dirPath, regex) => [Mat]
+
+Take all images from the `dirPath` directory that match the regext string passed (if passed) and return an array of OpenCV Image Mats.
+
+#### getFacesFromDir(options) => [Mat]
+
+Same as `getImgsFromDir`, but returns faces found in the images (filtering out images that don't have a face). `options` must contain a key `dirPath`. `options` can include `regex`, `gray`, and `resize`. `gray` is a boolean, `resize` is an object `{ x, y }`
+
+#### getFacesFromDirForTraining(dirPath, regex) => [Mat]
+
+Same as `getFacesFromDir`, but grayscales the image and resizes it to 80x80.
+
 ### src/lib/video.js
 
 #### startVideo(handlers, options) => handleExit()

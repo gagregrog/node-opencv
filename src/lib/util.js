@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path')
+const fs = require('fs-extra')
 const cv = require('opencv4nodejs')
 
 const classifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_ALT2)
@@ -25,8 +27,41 @@ const exitOnFrame = frameNum => (frame, options) => {
   return options.frameCount === frameNum
 }
 
+const getImgsFromDir = (dirPath, regex) => {
+  let images = fs.readdirSync(dirPath)
+
+  if (regex) {
+    const reg = RegExp(regex)
+
+    images = images.filter(a => reg.test(a))
+  }
+
+  return images.map(img => cv.imread(path.resolve(dirPath, img)))
+}
+
+const getFacesFromDir = options =>
+  getImgsFromDir(options.dirPath, options.regex)
+    .map(img => getFaceImg(img, options.gray))
+    .filter(img => img)
+    .map(img => (
+      options.resize && options.resize.x && options.resize.y 
+        ? img.resize(options.resize.x, options.resize.y)
+        : img
+    ))
+
+const getFacesFromDirForTraining = (dirPath, regex) =>
+  getFacesFromDir({
+    regex,
+    dirPath,
+    gray: true,
+    resize: { x: 80, y: 80 }
+  })
+
 module.exports = {
   getFaceImg,
   getFaceRect,
   exitOnFrame,
+  getImgsFromDir,
+  getFacesFromDir,
+  getFacesFromDirForTraining,
 }

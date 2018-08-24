@@ -45,7 +45,7 @@ const startVideo = (handlers, options) => {
 
 const saveFaces = (options) => {
   const { 
-    resize, 
+    resize = {}, 
     folderPath,
     numFaces=10, 
   } = options
