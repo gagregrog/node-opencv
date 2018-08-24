@@ -16,9 +16,9 @@ $ npm install
 
 ### src/lib/util.js
 
-#### getFaceImg(image)
+#### getFaceImg(image, gray=true)
 
-Pass it an OpenCV image and it will try to detect a face. If a face is found, a cropped image showing only the face is returned. 
+Pass it an OpenCV image and it will try to detect a face. If a face is found, a cropped image showing only the face is returned. `gray` is a switch determining whether or not the image should be converted to grayscale.
 
 If no face is found, `null` is returned.
 
@@ -27,6 +27,10 @@ If no face is found, `null` is returned.
 Pass it an OpenCV image and it will try to detect a face. If a face is found, an OpenCV Rect object is returned. The Rect object has the shape { width, height, x, y }. 
 
 If no face is found, `null` is returned.
+
+#### exitOnFrame(frameNum)
+
+Returns a function that can be passed as `handleKeypress` to `startVideo` to terminate the video after a given number of frames.
 
 ### src/lib/video.js
 
@@ -56,6 +60,10 @@ The logic that controls how the video is shown. Runs after `handleFrame`. Does n
 
 Run custom logic in response to user keypresses. Must return a boolean indicating whether the stream should continue or not.
 
+###### handleExit()
+
+A function to run on program exit.
+
 ##### options
 
 An object to tweak behavior. Passed as the second argument to all handlers.
@@ -63,3 +71,7 @@ An object to tweak behavior. Passed as the second argument to all handlers.
 By default it has the shape { devicePort, qKey }.
 
 `deviceShape` can be used to override the default webcam. `qKey` can be used to override the default exit key.
+
+#### saveFaces(numFaces=10, folderPath='./img')
+
+Starts the webcam and captures the given number of faces, writing them to the provided folder. If the folder doesn't exist, it is created.
