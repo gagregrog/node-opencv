@@ -43,7 +43,7 @@ const startVideo = (handlers, options) => {
   return handlers.handleExit()
 }
 
-const saveFaces = (options) => {
+const saveFacesFromVideo = (options) => {
   const { 
     resize = {}, 
     folderPath,
@@ -85,6 +85,6 @@ const saveFaces = (options) => {
 }
 
 module.exports = {
-  saveFaces,
   startVideo,
+  saveFacesFromVideo,
 }

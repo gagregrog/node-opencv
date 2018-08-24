@@ -48,6 +48,33 @@ Same as `getFacesFromDir`, but grayscales the image and resizes it to 80x80.
 
 Takes an array of images, splitting it at the provided percentage [0, 1] and returning the first as `train` and the second as `test`.
 
+const trainFaceClassifiers = imageSets => {
+#### getTestAndTrain = (imgsArr, percentage=0.75) => ({ train, test })
+
+Takes an array of metadata/data and returns the Eigen, Fisher, and LBPH face detectors trained on the images referenced in the argument `imageSets`. 
+
+`imageSets` should be an array containing objects with the following shape:
+
+```
+{
+   label: 'someLabel',
+   dirPath: './some/path',
+   regex: 'some-pattern',
+   faces: [<array of mats>]
+ }
+```
+
+`label` is required and should describe the collection, ie the name of the person in the images. If you already have an array of faces formatted for detection (for example, from calling `saveFacesFromVideo` or `getFacesFromDir` and resizing to a square) then you can pass the array in directly. Otherwise, you must describe a `dirPath` with the optional `regex` string to read in and detect images from a directory.
+
+The return is an object containing three different predictor functions. The object has this shape:
+
+```
+{ eigenPredict, fisherPredict, lbphPredict }
+```
+
+
+Pass an OpenCV Image Mat into any of the predictors and get an object containing the corresponding `label` and `confidence` of the prediction.
+
 ### src/lib/util.js
 
 #### shuffleArray(array) => [...]
@@ -99,7 +126,7 @@ By default it has the shape { devicePort, qKey }.
 
 `deviceShape` can be used to override the default webcam. `qKey` can be used to override the default exit key.
 
-#### saveFaces(options) => [faces]
+#### saveFacesFromVideo(options) => [faces]
 
 Starts the webcam and captures a given number of faces, returning them in an array. 
 

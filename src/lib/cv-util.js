@@ -65,6 +65,49 @@ const getTestAndTrain = (imgsArr, percentage=0.75) => {
   return { test, train }
 }
 
+const trainFaceClassifiers = imageSets => {
+  // [{
+  //   label: 'someLabel',
+  //   dirPath: './some/path',
+  //   regex: 'some-pattern',
+  //   faces: [<array of mats>]
+  // }]
+
+  let labels = []
+  let faces = []
+  const labelMap = []
+
+  imageSets.forEach(({ dirPath, label, regex, faces: setFaces }, i) => {
+    if (!setFaces) setFaces = getFacesFromDirForTraining(dirPath, regex)
+
+    const setLabels = setFaces.map(() => i)
+    labels = [...labels, ...setLabels]
+    faces = [...faces, ...setFaces]
+    labelMap.push(label)
+  })
+
+  const eigen = new cv.EigenFaceRecognizer()
+  const fisher = new cv.FisherFaceRecognizer()
+  const lbph = new cv.LBPHFaceRecognizer()
+
+  eigen.train(train, labels)
+  fisher.train(train, labels)
+  lbph.train(train, labels)
+  
+  const predict = (recognizer) => (img) => {
+    const result = recognizer.predict(img)
+    console.log(`Predicted: ${result.label == 0 ? 'Rob' : 'Musk'} Confidence: ${result.confidence}`)
+
+    return { label: labels[result.label], confidence: result.confidence }
+  }
+
+  const eigenPredict = predict(eigen)
+  const fisherPredict = predict(fisher)
+  const lbphPredict = predict(lbph)
+
+  return { eigenPredict, fisherPredict, lbphPredict }
+}
+
 module.exports = {
   getFaceImg,
   getFaceRect,
@@ -72,5 +115,6 @@ module.exports = {
   getImgsFromDir,
   getFacesFromDir,
   getTestAndTrain,
+  trainFaceClassifiers,
   getFacesFromDirForTraining,
 }
